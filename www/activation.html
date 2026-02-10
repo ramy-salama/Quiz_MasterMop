@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>تفعيل البرنامج</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* غيرت من center لـ flex-start */
+            min-height: 100vh;
+            padding: 10px; /* قللت البادنج */
+            direction: rtl;
+        }
+
+        .custom-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+
+        .activation-card {
+            background: white;
+            border-radius: 15px; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 480px; 
+            padding: 10px 8px; 
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-top: 5px; 
+        }
+
+        .activation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 4px; /* قللت السماكة */
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+        }
+
+        .logo {
+            width: 50px; /* قللت الحجم */
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            margin: 0 auto 3px; /* قللت المارجن */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px; /* قللت الخط */
+            color: white;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 0; /* قللت المارجن */
+            font-weight: 700;
+            font-size: 24px; /* قللت الخط */
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 5px; /* قللت المارجن */
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .step-container {
+            background: #f8f9fa;
+            border-radius: 10px; /* قللت الزوايا */
+            padding: 10px; /* قللت البادنج */
+            margin-bottom: 5px; /* قللت المسافة بين الخطوات */
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .step-container:hover {
+            border-color: #667eea;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.1);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px; /* قللت الفجوة */
+            margin-bottom: 5px 0; /* قللت المارجن */
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 26px; /* قللت الحجم */
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px; /* قللت الخط */
+        }
+
+        .step-title {
+            color: #333;
+            font-weight: 600;
+            font-size: 16px; /* قللت الخط */
+        }
+
+        .activation-code-box {
+            background: #fff;
+            border: 2px dashed #667eea;
+            border-radius: 8px; /* قللت الزوايا */
+            padding: 5px; /* قللت البادنج */
+            margin: 5px 0; /* قللت المارجن */
+        }
+
+        .code-display {
+            font-family: 'Courier New', monospace;
+            font-size: 20px; /* قللت الخط */
+            font-weight: bold;
+            color: #333;
+            letter-spacing: 1px;
+            padding: 8px; /* قللت البادنج */
+            background: #f8f9fa;
+            border-radius: 6px; /* قللت الزوايا */
+            margin: 8px 0; /* قللت المارجن */
+            direction: ltr;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px ; /* قللت البادنج */
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px; /* قللت الخط */
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin: 8px auto; /* قللت المارجن */
+            transition: all 0.3s;
+            width: 150px; /* قللت العرض */
+        }
+
+        .code-input-container {
+            position: relative;
+            margin: 10px 0; /* قللت المارجن */
+        }
+
+        .code-input {
+            width: 100%;
+            padding: 8px; /* قللت البادنج */
+            border: 2px solid #e0e0e0;
+            border-radius: 10px; /* قللت الزوايا */
+            font-size: 16px; /* قللت الخط */
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            direction: ltr;
+        }
+
+        .activate-btn {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+            border: none;
+            padding: 8px ; /* قللت البادنج */
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px; /* قللت الخط */
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px auto 0; /* عدلت المارجن */
+            transition: all 0.3s;
+            width: 150px; /* قللت العرض */
+        }
+
+        .message {
+            margin-top: 15px; /* قللت المارجن */
+            padding: 12px; /* قللت البادنج */
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            min-height: 45px; /* قللت الارتفاع */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 14px; /* قللت الخط */
+        }
+
+        /* حذفت قسم التعليمات كله */
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+                align-items: flex-start;
+                padding-top: 5px;
+            }
+            
+            .activation-card {
+                padding: 20px 15px;
+                margin-top: 5px;
+                border-radius: 12px;
+            }
+            
+            .logo {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+                margin-bottom: 12px;
+            }
+            
+            h1 {
+                font-size: 20px;
+                margin-bottom: 6px;
+            }
+            
+            .subtitle {
+                font-size: 13px;
+                margin-bottom: 15px;
+            }
+            
+            .step-container {
+                padding: 15px;
+                margin-bottom: 12px;
+            }
+            
+            .code-display {
+                font-size: 18px;
+                padding: 6px;
+            }
+            
+            .copy-btn, .activate-btn {
+                width: 100%;
+                padding: 10px;
+            }
+        }
+
+        /* إضافة scroll صغير إذا المحتوى طويل */
+        .activation-card {
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+        
+        /* إخفاء scrollbar لكن مع إمكانية السكرول */
+        .activation-card::-webkit-scrollbar {
+            width: 5px;
+        }
+        
+        .activation-card::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .activation-card::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="custom-scroll">
+    <div class="activation-card">
+        <div class="logo">🔑</div>
+        <h1>تفعيل البرنامج</h1>
+        <p class="subtitle">تفعيل سريع في خطوتين فقط</p>
+
+        <!-- الخطوة 1: عرض رمز التفعيل -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">انسخ رمز التفعيل</div>
+            </div>
+            <p style="color: #666; margin-bottom: 12px; font-size: 14px;">انسخ هذا الرمز وأرسله لمطور البرنامج</p>
+            
+            <div class="activation-code-box">
+                <div class="code-display" id="activationCode">جاري التحميل...</div>
+                <button class="copy-btn" onclick="copyActivationCode()" id="copyBtn">
+                    📋 نسخ الرمز
+                </button>
+            </div>
+        </div>
+
+        <!-- الخطوة 2: إدخال كود التفعيل -->
+        <div class="step-container">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">أدخل كود التفعيل</div>
+            </div>
+            <p style="color: #666; margin-bottom: 12px; font-size: 14px;">أدخل الكود الذي أرسله لك المطور</p>
+            
+            <div class="code-input-container">
+                <input 
+                    type="text" 
+                    id="activationKeyInput" 
+                    class="code-input" 
+                    placeholder="أدخل كود التفعيل هنا" 
+                    maxlength="14"
+                    oninput="formatCode(this)"
+                    autocomplete="off"
+                >
+            </div>
+            
+            <button class="activate-btn" onclick="activateProgram()" id="activateBtn">
+                تفعيل البرنامج
+                <div class="loader" id="loader"></div>
+            </button>
+            <p style="color: #666; margin-top: 8px; font-size: 14px;">بعد التفعيل قم بإعادة تشغيل البرنامج</p>
+        </div>
+
+        <!-- رسائل التفعيل -->
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const code = await window.activationAPI.getActivationCode();
+                document.getElementById('activationCode').textContent = code;
+            } catch (error) {
+                document.getElementById('activationCode').textContent = 'خطأ في التوليد';
+                showMessage('حدث خطأ في توليد رمز التفعيل', 'error');
+            }
+        });
+
+        // نسخ رمز التفعيل
+        async function copyActivationCode() {
+            const code = document.getElementById('activationCode').textContent;
+            if (code === 'جاري التحميل...' || code === 'خطأ في التوليد') return;
+            
+            try {
+                await navigator.clipboard.writeText(code);
+                const btn = document.getElementById('copyBtn');
+                btn.innerHTML = '✓ تم النسخ';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.innerHTML = '📋 نسخ الرمز';
+                    btn.style.background = '';
+                }, 1500);
+            } catch (err) {
+                showMessage('تعذر نسخ الرمز', 'error');
+            }
+        }
+
+        // تنسيق الكود أثناء الكتابة (XXXX-XXXX-XXXX)
+        function formatCode(input) {
+            let value = input.value.replace(/[^A-Z0-9]/gi, '');
+            if (value.length > 12) value = value.substring(0, 12);
+            
+            let formatted = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) formatted += '-';
+                formatted += value[i];
+            }
+            input.value = formatted.toUpperCase();
+        }
+
+        // تفعيل البرنامج
+        async function activateProgram() {
+            const code = document.getElementById('activationKeyInput').value.trim();
+            const btn = document.getElementById('activateBtn');
+            const loader = document.getElementById('loader');
+            const message = document.getElementById('message');
+
+            if (!code || code.length < 12) {
+                showMessage('الرجاء إدخال كود التفعيل كاملاً', 'error');
+                return;
+            }
+
+            // تعطيل الزر وإظهار المؤشر
+            btn.disabled = true;
+            btn.innerHTML = 'جاري التحقق...';
+            message.className = 'message info';
+            message.textContent = 'جاري التحقق من كود التفعيل...';
+
+            try {
+                const result = await window.activationAPI.activateLicense(code);
+                
+                if (result.success) {
+                    showMessage('✅ تم التفعيل بنجاح!', 'success');
+                    message.innerHTML += '<br><small>يتم إعادة التشغيل...</small>';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = '✓ تم التفعيل';
+                        btn.style.background = '#28a745';
+                    }, 500);
+                    
+                } else {
+                    showMessage(`❌ ${result.message}`, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'تفعيل البرنامج';
+                }
+            } catch (error) {
+                showMessage('حدث خطأ غير متوقع', 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'تفعيل البرنامج';
+            }
+        }
+
+        // عرض الرسائل
+        function showMessage(text, type = 'info') {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type}`;
+        }
+
+        // السماح بالضغط على Enter
+        document.getElementById('activationKeyInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                activateProgram();
+            }
+        });
+    </script>
+</body>
+</html>

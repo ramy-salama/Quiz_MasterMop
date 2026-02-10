@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Master - إدارة الطلاب</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.1s, color 0.1s;
+            outline: none;
+        }
+
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: white;
+            --text-color: #333;
+            --header-bg: #2c3e50;
+            --border-color: #ecf0f1;
+            --primary-color: #f58a38;
+            --hover-color: #4a90e2;
+            --section: #fdf3ea;
+            --shadow: #d8dada;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --negative-color: #ff4757;
+        }
+
+        .dark-mode {
+            --bg-color: #080c14;
+            --card-bg: #1e2a3a;
+            --text-color: #ffffff;
+            --header-bg: #1e2a3a;
+            --border-color: #404040;
+            --primary-color: #357abd;
+            --hover-color: #f58a38;
+            --section: #222b3d;
+            --shadow: #28505d;
+            --danger-color: #ff6b6b;
+            --success-color: #1dd1a1;
+            --negative-color: #ff6b6b;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .custom-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* الهيدر */
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--header-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px var(--shadow);
+            border-bottom: 10px solid var(--primary-color);
+        }
+
+        .back-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        .class-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .class-title h1 {
+            font-size: 1.5rem;
+            color: white;
+            margin: 0;
+        }
+
+        .emoji-icon {
+            font-size: inherit;
+            line-height: 1;
+            display: inline-block;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn:hover {
+            background: var(--hover-color);
+            transform: scale(1.1);
+        }
+
+         .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 50%;
+            padding: 5px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.2);
+            rotate: -45deg;
+        }
+
+        /* لوحة التحكم */
+        .control-panel {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .add-student-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .add-student-btn:hover {
+            background: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        /* جدول الطلاب */
+        .students-table-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid var(--border-color);
+            overflow-x: auto;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        .students-table thead {
+            background-color: var(--header-bg);
+            color: white;
+        }
+
+        .students-table th {
+            padding: 12px;
+            text-align: right;
+            font-weight: 600;
+            border-bottom: 3px solid var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        .students-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+        }
+
+        .students-table tbody tr:hover {
+            background-color: var(--section);
+        }
+
+        .student-name-cell {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .student-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--hover-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .attendance-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .attendance-counter {
+            font-size: 1.8rem;
+            font-weight: 700;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .attendance-positive {
+            color: var(--primary-color);
+        }
+
+        .attendance-negative {
+            color: var(--negative-color);
+        }
+
+        .counter-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .counter-btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .plus-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .minus-btn {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .counter-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.1);
+        }
+
+        /* علامات الـ8 المكتملة */
+        .completed-8-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .red-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .red-badge {
+            background: var(--danger-color);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .red-badge:hover {
+            background: #ff3838;
+            transform: scale(1.1);
+        }
+
+        .red-badge::after {
+            content: '8';
+        }
+
+        /* أزرار الإجراءات */
+        .actions-cell {
+            display: flex;
+            gap: 6px;
+        }
+
+        .table-btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s;
+        }
+
+        .edit-btn {
+            background: var(--hover-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background: #666;
+            color: white;
+        }
+
+        .table-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* حالة فارغة */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-color);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* نوافذ مؤقتة */
+        .temp-modal {
+            display: flex !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0,0,0,0.5) !important;
+            z-index: 2000 !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            width: 90%;
+            max-width: 450px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal h3 {
+            margin-bottom: 15px;
+            color: var(--text-color);
+            font-size: 1.3rem;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            background: var(--section);
+            color: var(--text-color);
+            box-shadow: 0 3px 8px var(--shadow);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .modal-btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .modal-btn-secondary {
+            background: var(--border-color);
+            color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .class-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding: 12px;
+            }
+            
+            .control-panel {
+                flex-direction: column;
+                text-align: center;
+                padding: 12px;
+            }
+            
+            .attendance-section {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .students-table-container {
+                padding: 12px;
+            }
+            
+            .students-table th,
+            .students-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body class="custom-scroll">
+    <div class="container">
+        <!-- هيدر الصف -->
+        <header class="class-header">
+            <button class="back-btn" onclick="goBack()">
+                <span class="emoji-icon">←</span> العودة
+            </button>
+            <div class="class-title">
+                <h1 id="className">طلاب الصف : <span id="classTitle">الصف الأول ثانوي</span></h1>
+            </div>
+            <div class="header-controls">
+                <button class="icon-btn theme-toggle" id="themeToggle" title="الوضع الداكن">
+                    <span class="emoji-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- لوحة التحكم -->
+        <div class="control-panel">
+            <div class="panel-title">
+                <span class="emoji-icon">📋</span> قائمة الطلاب
+            </div>
+            <button class="add-student-btn" id="addStudentBtn">
+                <span class="emoji-icon">➕</span> إضافة طالب
+            </button>
+        </div>
+
+        <!-- جدول الطلاب -->
+        <div class="students-table-container">
+            <table class="students-table" id="studentsTable">
+                <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th width="25%">اسم الطالب</th>
+                        <th width="25%">الحضور</th>
+                        <th width="30%">الـ8 المكتملة</th>
+                        <th width="15%">تحكم</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTableBody"></tbody>
+            </table>
+            <div class="empty-state" id="emptyStudents" style="display: none;">
+                <div class="empty-icon">👤</div>
+                <h3>لا يوجد طلاب</h3>
+                <p>استخدم زر "إضافة طالب" لبدء القائمة</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentClassId = null;
+        let currentClassName = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentClassId = urlParams.get('class');
+            currentClassName = urlParams.get('name') || 'الصف الأول ثانوي';
+            document.getElementById('classTitle').textContent = currentClassName;
+            loadStudents();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            const toggleBtn = document.getElementById('themeToggle');
+            const icon = document.querySelector('#themeToggle .emoji-icon');
+
+            const savedMode = localStorage.getItem('darkMode');
+            if (savedMode === 'true') {
+                document.body.classList.add('dark-mode');
+                icon.textContent = '☀️';
+            } else {
+                document.body.classList.remove('dark-mode');
+                icon.textContent = '🌙';
+            }
+
+            toggleBtn.onclick = () => {
+                document.body.classList.toggle('dark-mode');
+                const isDark = document.body.classList.contains('dark-mode');
+                icon.textContent = isDark ? '☀️' : '🌙';
+                localStorage.setItem('darkMode', isDark);
+            };
+        }
+
+        async function loadStudents() {
+            try {
+                const students = await window.database.getStudents(parseInt(currentClassId));
+                const tbody = document.getElementById('studentsTableBody');
+                const emptyState = document.getElementById('emptyStudents');
+
+                if (!students || students.length === 0) {
+                    tbody.innerHTML = '';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+                emptyState.style.display = 'none';
+
+                tbody.innerHTML = students.map((student, index) => {
+                    const firstLetter = student.name.charAt(0);
+                    const redBadges = Array(student.completed_8).fill(0)
+                        .map((_, i) => `<div class="red-badge" onclick="removeRedBadge(${student.id}, ${i})"></div>`).join('');
+                    
+                    const attendanceClass = student.attendance >= 0 ? 'attendance-positive' : 'attendance-negative';
+                    const displayAttendance = student.attendance;
+
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>
+                                <div class="student-name-cell">
+                                    <div class="student-avatar">${firstLetter}</div>
+                                    ${student.name}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="attendance-section">
+                                    <div class="attendance-counter ${attendanceClass}">${displayAttendance}/8</div>
+                                    <div class="counter-controls">
+                                        <button class="counter-btn plus-btn" onclick="changeAttendance(${student.id}, 1)">+</button>
+                                        <button class="counter-btn minus-btn" onclick="changeAttendance(${student.id}, -1)">-</button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><div class="completed-8-section"><div class="red-badges">${redBadges}</div></div></td>
+                            <td class="actions-cell">
+                                <button class="table-btn edit-btn" onclick="editStudent(${student.id}, '${student.name.replace(/'/g, "\\'")}')">
+                                    <span class="emoji-icon">✏️</span>
+                                </button>
+                                <button class="table-btn delete-btn" onclick="deleteStudent(${student.id})">
+                                    <span class="emoji-icon">🗑️</span>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('خطأ في تحميل الطلاب:', error);
+            }
+        }
+
+        // ========== دالة فتح لوحة المفاتيح ==========
+        function openWebKeyboard(inputElement) {
+            const keyboardWindow = window.open('', '_blank', 
+                'width=680,height=340,left=100,top=100,scrollbars=no,resizable=no');
+            
+            keyboardWindow.document.write(`
+                <!DOCTYPE html>
+                <html dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        * {
+                            margin: 0;
+                            padding: 0;
+                            box-sizing: border-box;
+                            user-select: none;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 12px;
+                            font-family: Arial, sans-serif;
+                            background: #1e2a3a;
+                            height: 100vh;
+                            display: flex;
+                            flex-direction: column;
+                        }
+                        
+                        .input-row {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            margin-bottom: 10px;
+                        }
+                        
+                        .lang-btn {
+                            background: linear-gradient(145deg, #f58a38, #e67e22);
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            width: 40px;
+                            height: 40px;
+                            font-size: 12px;
+                            font-weight: bold;
+                            cursor: pointer;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: 
+                                0 3px 0 #bf6516,
+                                0 4px 6px rgba(0,0,0,0.2);
+                            flex-shrink: 0;
+                        }
+                        
+                        .lang-btn:active {
+                            transform: translateY(3px);
+                            box-shadow: 
+                                0 0 0 #bf6516,
+                                0 2px 4px rgba(0,0,0,0.1);
+                        }
+                        
+                        .input-container {
+                            flex: 1;
+                            background: white;
+                            border-radius: 6px;
+                            padding: 8px;
+                            border: 2px solid #4a90e2;
+                            height: 40px;
+                            display: flex;
+                            align-items: center;
+                        }
+                        
+                        #textInput {
+                            width: 100%;
+                            padding: 0 8px;
+                            font-size: 14px;
+                            border: none;
+                            outline: none;
+                            background: transparent;
+                            height: 100%;
+                        }
+                        
+                        .keyboard {
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 6px;
+                            padding: 8px;
+                            background: #2c3e50;
+                            border-radius: 10px;
+                        }
+                        
+                        .keyboard-row {
+                            display: flex;
+                            justify-content: center;
+                            gap: 4px;
+                            flex: 1;
+                        }
+                        
+                        .key {
+                            flex: 1;
+                            background: linear-gradient(145deg, #ecf0f1, #bdc3c7);
+                            border: none;
+                            border-radius: 6px;
+                            font-size: 13px;
+                            font-weight: bold;
+                            color: #2c3e50;
+                            cursor: pointer;
+                            min-width: 30px;
+                            height: 38px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: 
+                                0 3px 0 #95a5a6,
+                                0 4px 6px rgba(0,0,0,0.2);
+                            transition: all 0.1s;
+                        }
+                        
+                        .key:active {
+                            transform: translateY(3px);
+                            box-shadow: 
+                                0 0 0 #95a5a6,
+                                0 2px 4px rgba(0,0,0,0.1);
+                        }
+                        
+                        .key.space {
+                            flex: 5;
+                            min-width: 180px;
+                            background: linear-gradient(145deg, #3498db, #2980b9);
+                            color: white;
+                            box-shadow: 
+                                0 3px 0 #1c5d8a,
+                                0 4px 6px rgba(0,0,0,0.2);
+                            font-size: 12px;
+                        }
+                        
+                        .key.caps {
+                            background: linear-gradient(145deg, #9b59b6, #8e44ad);
+                            color: white;
+                            box-shadow: 
+                                0 3px 0 #6c3483,
+                                0 4px 6px rgba(0,0,0,0.2);
+                            font-size: 11px;
+                            flex: 1;
+                            min-width: 40px;
+                        }
+                        
+                        .key.caps.active {
+                            background: linear-gradient(145deg, #ffeb3b, #fbc02d);
+                            color: #2c3e50;
+                            box-shadow: 
+                                0 3px 0 #f57c00,
+                                0 4px 6px rgba(0,0,0,0.2);
+                        }
+                        
+                        .key.enter {
+                            background: linear-gradient(145deg, #2ecc71, #27ae60);
+                            color: white;
+                            box-shadow: 
+                                0 3px 0 #1e8449,
+                                0 4px 6px rgba(0,0,0,0.2);
+                            font-size: 11px;
+                            flex: 1.2;
+                        }
+                        
+                        .key.backspace {
+                            background: linear-gradient(145deg, #e74c3c, #c0392b);
+                            color: white;
+                            box-shadow: 
+                                0 3px 0 #922b21,
+                                0 4px 6px rgba(0,0,0,0.2);
+                            font-size: 14px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="input-row">
+                        <button class="lang-btn" onclick="toggleLang()" id="langBtn" title="تبديل اللغة">عربي</button>
+                        <div class="input-container">
+                            <input type="text" id="textInput" placeholder="اكتب هنا..." value="${inputElement.value}" 
+                                  onkeyup="if(event.key === 'Enter') insertText()" autofocus />
+                        </div>
+                    </div>
+                    
+                    <div class="keyboard" id="arabicKeyboard">
+                        <div class="keyboard-row">
+                            <button class="key" onclick="typeChar('ض')">ض</button>
+                            <button class="key" onclick="typeChar('ص')">ص</button>
+                            <button class="key" onclick="typeChar('ث')">ث</button>
+                            <button class="key" onclick="typeChar('ق')">ق</button>
+                            <button class="key" onclick="typeChar('ف')">ف</button>
+                            <button class="key" onclick="typeChar('غ')">غ</button>
+                            <button class="key" onclick="typeChar('ع')">ع</button>
+                            <button class="key" onclick="typeChar('ه')">ه</button>
+                            <button class="key" onclick="typeChar('خ')">خ</button>
+                            <button class="key" onclick="typeChar('ح')">ح</button>
+                            <button class="key" onclick="typeChar('ج')">ج</button>
+                            <button class="key backspace" onclick="backspace()">⌫</button>
+                        </div>
+                        
+                        <div class="keyboard-row">
+                            <button class="key" onclick="typeChar('د')">د</button>
+                            <button class="key" onclick="typeChar('ش')">ش</button>
+                            <button class="key" onclick="typeChar('س')">س</button>
+                            <button class="key" onclick="typeChar('ي')">ي</button>
+                            <button class="key" onclick="typeChar('ب')">ب</button>
+                            <button class="key" onclick="typeChar('ل')">ل</button>
+                            <button class="key" onclick="typeChar('ا')">ا</button>
+                            <button class="key" onclick="typeChar('ت')">ت</button>
+                            <button class="key" onclick="typeChar('ن')">ن</button>
+                            <button class="key" onclick="typeChar('م')">م</button>
+                            <button class="key" onclick="typeChar('ك')">ك</button>
+                            <button class="key enter" onclick="insertText()">↵</button>
+                        </div>
+                        
+                        <div class="keyboard-row">
+                            <button class="key" onclick="typeChar('ط')">ط</button>
+                            <button class="key" onclick="typeChar('ئ')">ئ</button>
+                            <button class="key" onclick="typeChar('ء')">ء</button>
+                            <button class="key" onclick="typeChar('ؤ')">ؤ</button>
+                            <button class="key" onclick="typeChar('ر')">ر</button>
+                            <button class="key" onclick="typeChar('ى')">ى</button>
+                            <button class="key" onclick="typeChar('ة')">ة</button>
+                            <button class="key" onclick="typeChar('و')">و</button>
+                            <button class="key" onclick="typeChar('ز')">ز</button>
+                            <button class="key" onclick="typeChar('ظ')">ظ</button>
+                            <button class="key" onclick="typeChar('ذ')">ذ</button>
+                        </div>
+                        
+                        <div class="keyboard-row">
+                            <button class="key space" onclick="typeChar(' ')">␣ مسافة</button>
+                            <button class="key caps" id="capsBtn" onclick="toggleCaps()" title="Caps Lock">CAPS</button>
+                        </div>
+                    </div>
+                    
+                    <div class="keyboard" id="englishKeyboard" style="display:none">
+                        <div class="keyboard-row">
+                            <button class="key" data-char="q" onclick="typeChar('q')">q</button>
+                            <button class="key" data-char="w" onclick="typeChar('w')">w</button>
+                            <button class="key" data-char="e" onclick="typeChar('e')">e</button>
+                            <button class="key" data-char="r" onclick="typeChar('r')">r</button>
+                            <button class="key" data-char="t" onclick="typeChar('t')">t</button>
+                            <button class="key" data-char="y" onclick="typeChar('y')">y</button>
+                            <button class="key" data-char="u" onclick="typeChar('u')">u</button>
+                            <button class="key" data-char="i" onclick="typeChar('i')">i</button>
+                            <button class="key" data-char="o" onclick="typeChar('o')">o</button>
+                            <button class="key" data-char="p" onclick="typeChar('p')">p</button>
+                            <button class="key backspace" onclick="backspace()">⌫</button>
+                        </div>
+                        
+                        <div class="keyboard-row">
+                            <button class="key" data-char="a" onclick="typeChar('a')">a</button>
+                            <button class="key" data-char="s" onclick="typeChar('s')">s</button>
+                            <button class="key" data-char="d" onclick="typeChar('d')">d</button>
+                            <button class="key" data-char="f" onclick="typeChar('f')">f</button>
+                            <button class="key" data-char="g" onclick="typeChar('g')">g</button>
+                            <button class="key" data-char="h" onclick="typeChar('h')">h</button>
+                            <button class="key" data-char="j" onclick="typeChar('j')">j</button>
+                            <button class="key" data-char="k" onclick="typeChar('k')">k</button>
+                            <button class="key" data-char="l" onclick="typeChar('l')">l</button>
+                            <button class="key" data-char=";" onclick="typeChar(';')">;</button>
+                            <button class="key enter" onclick="insertText()">↵</button>
+                        </div>
+                        
+                        <div class="keyboard-row">
+                            <button class="key" data-char="z" onclick="typeChar('z')">z</button>
+                            <button class="key" data-char="x" onclick="typeChar('x')">x</button>
+                            <button class="key" data-char="c" onclick="typeChar('c')">c</button>
+                            <button class="key" data-char="v" onclick="typeChar('v')">v</button>
+                            <button class="key" data-char="b" onclick="typeChar('b')">b</button>
+                            <button class="key" data-char="n" onclick="typeChar('n')">n</button>
+                            <button class="key" data-char="m" onclick="typeChar('m')">m</button>
+                            <button class="key" data-char="," onclick="typeChar(',')">,</button>
+                            <button class="key" data-char="." onclick="typeChar('.')">.</button>
+                            <button class="key" data-char="/" onclick="typeChar('/')">/</button>
+                        </div>
+                        
+                        <div class="keyboard-row">
+                            <button class="key space" onclick="typeChar(' ')">␣ Space</button>
+                            <button class="key caps" id="capsBtnEng" onclick="toggleCaps()" title="Caps Lock">CAPS</button>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        let isArabic = true;
+                        let isCaps = false;
+                        
+                        function typeChar(char) {
+                            const input = document.getElementById('textInput');
+                            const start = input.selectionStart;
+                            const end = input.selectionEnd;
+                            
+                            if (isCaps && !isArabic && char >= 'a' && char <= 'z') {
+                                char = char.toUpperCase();
+                            }
+                            
+                            input.value = input.value.substring(0, start) + char + input.value.substring(end);
+                            input.selectionStart = input.selectionEnd = start + 1;
+                            input.focus();
+                        }
+                        
+                        function backspace() {
+                            const input = document.getElementById('textInput');
+                            const start = input.selectionStart;
+                            const end = input.selectionEnd;
+                            if (start > 0) {
+                                input.value = input.value.substring(0, start - 1) + input.value.substring(end);
+                                input.selectionStart = input.selectionEnd = start - 1;
+                            }
+                            input.focus();
+                        }
+                        
+                        function insertText() {
+                            const text = document.getElementById('textInput').value;
+                            try {
+                                window.opener.document.getElementById('${inputElement.id}').value = text;
+                                window.opener.document.getElementById('${inputElement.id}').focus();
+                            } catch(e) {
+                                console.log('Error:', e);
+                            }
+                            window.close();
+                        }
+                        
+                        function toggleLang() {
+                            isArabic = !isArabic;
+                            document.getElementById('langBtn').textContent = isArabic ? 'عربي' : 'ENG';
+                            document.getElementById('arabicKeyboard').style.display = isArabic ? 'flex' : 'none';
+                            document.getElementById('englishKeyboard').style.display = isArabic ? 'none' : 'flex';
+                        }
+                        
+                        function toggleCaps() {
+                            isCaps = !isCaps;
+                            const capsBtns = document.querySelectorAll('.key.caps');
+                            capsBtns.forEach(btn => {
+                                if (isCaps) {
+                                    btn.classList.add('active');
+                                    btn.textContent = 'CAPS ON';
+                                } else {
+                                    btn.classList.remove('active');
+                                    btn.textContent = 'CAPS';
+                                }
+                            });
+                            
+                            if (!isArabic) {
+                                updateEnglishKeys();
+                            }
+                        }
+                        
+                        function updateEnglishKeys() {
+                            const englishKeys = document.querySelectorAll('#englishKeyboard .key[data-char]');
+                            englishKeys.forEach(key => {
+                                const originalChar = key.getAttribute('data-char');
+                                let displayChar = originalChar;
+                                
+                                if (isCaps && originalChar >= 'a' && originalChar <= 'z') {
+                                    displayChar = originalChar.toUpperCase();
+                                }
+                                
+                                key.textContent = displayChar;
+                                key.onclick = function() {
+                                    typeChar(originalChar);
+                                };
+                            });
+                        }
+                        
+                        document.getElementById('textInput').focus();
+                        document.getElementById('textInput').select();
+                        
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape') window.close();
+                            if (e.key === 'Enter') insertText();
+                        });
+                    <\/script>
+                </body>
+                </html>
+            `);
+        }
+
+        document.getElementById('addStudentBtn').onclick = () => {
+            createModal(
+                '<span class="emoji-icon">➕</span> إضافة طالب',
+                [{ placeholder: 'اسم الطالب', value: '', onclick: 'openWebKeyboard(this)' }],
+                async (values) => {
+                    const [name] = values;
+                    if (!name) return;
+                    try {
+                        await window.database.addStudent(parseInt(currentClassId), name);
+                        loadStudents();
+                    } catch (error) {
+                        console.error('خطأ في إضافة الطالب:', error);
+                    }
+                }
+            );
+        };
+
+        async function changeAttendance(studentId, change) {
+            try {
+                const students = await window.database.getStudents(parseInt(currentClassId));
+                const student = students.find(s => s.id === studentId);
+                if (!student) return;
+                
+                const newAttendance = student.attendance + change;
+                
+                await window.database.updateStudentAttendance(studentId, newAttendance);
+                
+                if (Math.abs(newAttendance) >= 8) {
+                    await window.database.checkAndAddCompleted8(studentId);
+                    await window.database.updateStudentAttendance(studentId, 0);
+                }
+                
+                loadStudents();
+            } catch (error) {
+                console.error('خطأ في تغيير الحضور:', error);
+            }
+        }
+
+        async function removeRedBadge(studentId, badgeIndex) {
+            if (!confirm('حذف هذه الـ8 المكتملة؟')) return;
+            try {
+                await window.database.removeCompleted8(studentId, badgeIndex);
+                loadStudents();
+            } catch (error) {
+                console.error('خطأ في حذف الـ8 المكتملة:', error);
+            }
+        }
+
+        function editStudent(studentId, currentName) {
+            createModal(
+                '<span class="emoji-icon">✏️</span> تعديل الطالب',
+                [{ value: currentName, placeholder: 'اسم الطالب', onclick: 'openWebKeyboard(this)' }],
+                async (values) => {
+                    const [newName] = values;
+                    if (!newName) return;
+                    try {
+                        await window.database.updateStudent(studentId, newName);
+                        loadStudents();
+                    } catch (error) {
+                        console.error('خطأ في تعديل الطالب:', error);
+                    }
+                }
+            );
+        }
+
+        async function deleteStudent(studentId) {
+            if (!confirm('حذف هذا الطالب؟')) return;
+            try {
+                await window.database.deleteStudent(studentId);
+                loadStudents();
+            } catch (error) {
+                console.error('خطأ في حذف الطالب:', error);
+            }
+        }
+
+        function createModal(title, fields, onConfirm) {
+            const modalId = 'modal_' + Date.now();
+            let modalHTML = `<div id="${modalId}" class="temp-modal"><div class="modal"><h3>${title}</h3>`;
+            fields.forEach((field, index) => {
+                modalHTML += `<input type="text" class="modal-input" id="field_${modalId}_${index}" placeholder="${field.placeholder || ''}" value="${field.value || ''}" onclick="${field.onclick || ''}">`;
+            });
+            modalHTML += `
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-primary" id="confirm_${modalId}">💾 حفظ</button>
+                    <button class="modal-btn modal-btn-secondary" id="cancel_${modalId}">❌ إلغاء</button>
+                </div></div></div>`;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            setTimeout(() => {
+                const firstInput = document.getElementById(`field_${modalId}_0`);
+                if (firstInput) {
+                    firstInput.focus();
+                    if (firstInput.onclick) {
+                        firstInput.setAttribute('onclick', 'openWebKeyboard(this)');
+                    }
+                }
+            }, 50);
+            document.getElementById(`confirm_${modalId}`).onclick = () => {
+                const values = fields.map((field, index) => document.getElementById(`field_${modalId}_${index}`)?.value.trim() || '');
+                onConfirm(values);
+                document.getElementById(modalId).remove();
+            };
+            document.getElementById(`cancel_${modalId}`).onclick = () => document.getElementById(modalId).remove();
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.getElementById(modalId)?.remove(); });
+        }
+
+        function goBack() {
+            window.location.href = `class-details.html?id=${currentClassId}&name=${encodeURIComponent(currentClassName)}`;
+        }
+    </script>
+</body>
+</html>

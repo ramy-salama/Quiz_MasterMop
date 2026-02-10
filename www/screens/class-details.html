@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <script src="../js/database-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amal Asad - تفاصيل الصف</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.1s, color 0.1s;
+        }
+
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: white;
+            --text-color: #333;
+            --header-bg: #2c3e50;
+            --border-color: #ecf0f1;
+            --primary-color: #f58a38;
+            --hover-color: #4a90e2;
+            --section: #fdf3ea;
+            --shadow: #d8dada;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+            --warning-color: #f58a38;
+        }
+
+        .dark-mode {
+            --bg-color: #080c14;
+            --card-bg: #1e2a3a;
+            --text-color: #ffffff;
+            --header-bg: #1e2a3a;
+            --border-color: #404040;
+            --primary-color: #357abd;
+            --hover-color: #f58a38;
+            --section: #222b3d;
+            --shadow: #28505d;
+            --danger-color: #ff6b6b;
+            --success-color: #1dd1a1;
+            --warning-color: #f58a38;
+        }
+
+        /* كلاس عام للسكرول */
+        .custom-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--header-bg);
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px var(--shadow);
+            border-bottom: 10px solid var(--primary-color);
+        }
+
+        .back-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        .class-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .class-title h1 {
+            font-size: 2rem;
+            color: white;
+            margin: 0;
+        }
+
+        .emoji-icon {
+            font-size: inherit;
+            line-height: 1;
+            display: inline-block;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 50%;
+            padding: 5px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.2);
+            rotate: -45deg;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .section-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            border: 3px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .section-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px var(--shadow);
+        }
+
+        .section-icon {
+            font-size: 4.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .section-card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 20px;
+        }
+
+        .stat-box {
+            background: var(--section);
+            padding: 6px 10px;
+            border-radius: 10px;
+            max-width: 80px;
+        }
+
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        .enter-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .enter-btn:hover {
+            background: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .class-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .header-controls {
+                justify-content: center;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="custom-scroll">
+    <div class="container">
+        <header class="class-header">
+            <button class="back-btn" onclick="goBack()">
+                <span class="emoji-icon">←</span> العودة
+            </button>
+            <div class="class-title">
+                <span style="font-size: 25px; color: #ffffff;">الصف :</span>
+                <h1 id="className"></h1>
+
+            </div>
+            <div class="header-controls">
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
+        </header>
+
+        <div class="sections-grid">
+            <!-- الطلاب -->
+            <div class="section-card" onclick="openStudentsSection()">
+                <div class="section-icon">
+                    <img src="../assets/images/student.png" width="180" height="200">
+                </div>
+                <h2 class="section-card-title">الطلاب</h2>
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalStudents">0</div>
+                        <div class="stat-label">طالب</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="avgAttendance">0%</div>
+                        <div class="stat-label">حضور</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="completed8">0</div>
+                        <div class="stat-label">مكتمل</div>
+                    </div>
+                </div>
+                <button class="enter-btn">
+                    <span class="emoji-icon">🚪</span> الطلاب
+                </button>
+            </div>
+
+            <!-- الأسئلة -->
+            <div class="section-card" onclick="openQuestionsSection()">
+                <div class="section-icon">
+                    <img src="../assets/images/question.png" width="180" height="200">
+                </div>
+                <h2 class="section-card-title">بنك الأسئلة</h2>
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalQuestions">0</div>
+                        <div class="stat-label">سؤال</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="essayQuestions">0</div>
+                        <div class="stat-label">مقالي</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="mcqQuestions">0</div>
+                        <div class="stat-label">اختياري</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="truefalseQuestions">0</div>
+                        <div class="stat-label"> <span>✔️</span>..<span>❌</span></div>
+                    </div>
+                </div>
+                <button class="enter-btn">
+                    <span class="emoji-icon">🚪</span> الأسئلة
+                </button>
+            </div>
+            <!-- العرض التفاعلي -->
+            <div class="section-card" onclick="openQuizDisplay()">
+                <div class="section-icon">
+                    <img src="../assets/images/presentation.png" width="180" height="200">
+                </div>
+                <h2 class="section-card-title">العرض التفاعلي</h2>
+                <button class="enter-btn">
+                    <span class="emoji-icon">▶️</span> بدء العرض
+                </button>
+            </div>
+
+            <!-- المسابقات -->
+            <div class="section-card" onclick="openCompetitions()">
+                <div class="section-icon">
+                    <img src="../assets/images/medal.png" width="180" height="200">
+                </div>
+                <h2 class="section-card-title">المسابقات</h2>
+                <button class="enter-btn">
+                    <span class="emoji-icon">🏁</span> بدء مسابقة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // انتظار تحميل الداتابيز أولاً
+        window.waitForDatabase(async function () {
+            const url = new URL(window.location.href);
+            const classId = url.searchParams.get('id');
+            const className = url.searchParams.get('name');
+
+            if (classId && className) {
+                document.getElementById('className').textContent = decodeURIComponent(className);
+                await updateStats(classId);
+            } else {
+                alert('لم يتم تحديد الصف بشكل صحيح');
+                window.location.href = '../index.html';
+            }
+        });
+
+        async function updateStats(classId) {
+            try {
+                const classIdNum = parseInt(classId);
+
+                // إحصائيات الطلاب
+                const students = await window.database.getStudents(classIdNum) || [];
+                const totalStudents = students.length;
+                const totalAttendance = students.reduce((sum, s) => sum + (s.attendance || 0), 0);
+                const totalCompleted8 = students.reduce((sum, s) => sum + (s.completed_8 || 0), 0);
+                const avgAttendance = totalStudents > 0 ? Math.round((totalAttendance / (totalStudents * 8)) * 100) : 0;
+
+                document.getElementById('totalStudents').textContent = totalStudents;
+                document.getElementById('avgAttendance').textContent = avgAttendance + '%';
+                document.getElementById('completed8').textContent = totalCompleted8;
+
+                // إحصائيات الأسئلة
+                const units = await window.database.getUnits(classIdNum) || [];
+                let totalQuestions = 0;
+                let essayQuestions = 0;
+                let mcqQuestions = 0;
+                let truefalseQuestions = 0;
+
+                for (const unit of units) {
+                    const stats = await window.database.getQuestionStats(classIdNum, unit.id) || {};
+                    totalQuestions += (stats.essay || 0) + (stats.mcq || 0) + (stats.truefalse || 0);
+                    essayQuestions += (stats.essay || 0);
+                    mcqQuestions += (stats.mcq || 0);
+                    truefalseQuestions += (stats.truefalse || 0);
+                }
+
+                document.getElementById('totalQuestions').textContent = totalQuestions;
+                document.getElementById('essayQuestions').textContent = essayQuestions;
+                document.getElementById('mcqQuestions').textContent = mcqQuestions;
+                document.getElementById('truefalseQuestions').textContent = truefalseQuestions;
+
+            } catch (error) {
+                console.error('❌ خطأ في تحديث الإحصائيات:', error);
+            }
+        }
+
+        // دوال الانتقال للصفحات
+        function openStudentsSection() {
+            goToPage('students.html');
+        }
+
+        function openQuestionsSection() {
+            goToPage('questions.html');
+        }
+
+        function openQuizDisplay() {
+            goToPage('quiz-display.html');
+        }
+
+        function openCompetitions() {
+            goToPage('competitions.html');
+        }
+
+        function goToPage(page) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const classId = urlParams.get('id');
+            const className = urlParams.get('name') || 'الصف الأول ثانوي';
+
+            localStorage.setItem('currentClass', JSON.stringify({
+                id: classId,
+                name: className
+            }));
+
+            window.location.href = `${page}?class=${classId}&name=${encodeURIComponent(className)}`;
+        }
+
+        /* الوضع الليلي */
+        // استعادة المود عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedMode = localStorage.getItem('darkMode');
+            const themeToggle = document.querySelector('.theme-toggle');
+
+            if (savedMode === 'true') {
+                document.body.classList.add('dark-mode');
+                themeToggle.textContent = '☀️';
+            } else {
+                document.body.classList.remove('dark-mode');
+                themeToggle.textContent = '🌙';
+            }
+        });
+
+        // تبديل المود عند الضغط
+        function toggleTheme() {
+            const themeToggle = document.querySelector('.theme-toggle');
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+
+        function goBack() {
+            window.location.href = '../index.html';
+        }
+
+        // دالة تحميل الطلاب
+        async function loadStudents(classId) {
+            try {
+                const students = await window.database.getStudents(classId);
+                const container = document.getElementById('studentsList');
+
+                if (!students || students.length === 0) {
+                    container.innerHTML = '<div class="empty-state">لا يوجد طلاب بعد</div>';
+                } else {
+                    container.innerHTML = '';
+                    students.forEach(student => {
+                        const div = document.createElement('div');
+                        div.style.cssText = 'padding: 15px; margin: 10px 0; background: #f5f5f5; border-radius: 10px;';
+                        div.textContent = student.name;
+                        container.appendChild(div);
+                    });
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل الطلاب:', error);
+                document.getElementById('studentsList').innerHTML = '<div class="empty-state">خطأ في التحميل</div>';
+            }
+        }
+
+        // دالة تحميل الوحدات
+        async function loadUnits(classId) {
+            try {
+                const units = await window.database.getUnits(classId);
+                const container = document.getElementById('unitsList');
+
+                if (!units || units.length === 0) {
+                    container.innerHTML = '<div class="empty-state">لا يوجد وحدات بعد</div>';
+                } else {
+                    container.innerHTML = '';
+                    units.forEach(unit => {
+                        const div = document.createElement('div');
+                        div.style.cssText = 'padding: 15px; margin: 10px 0; background: #f5f5f5; border-radius: 10px;';
+                        div.textContent = `${unit.name} (${unit.question_count || 0} سؤال)`;
+                        container.appendChild(div);
+                    });
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل الوحدات:', error);
+                document.getElementById('unitsList').innerHTML = '<div class="empty-state">خطأ في التحميل</div>';
+            }
+        }
+
+        // دالة تحميل الفرق
+        async function loadTeams(classId) {
+            try {
+                const teams = await window.database.getTeams(classId);
+                const container = document.getElementById('teamsList');
+
+                if (!teams || teams.length === 0) {
+                    container.innerHTML = '<div class="empty-state">لا يوجد فرق بعد</div>';
+                } else {
+                    container.innerHTML = '';
+                    teams.forEach(team => {
+                        const div = document.createElement('div');
+                        div.style.cssText = `padding: 15px; margin: 10px 0; background: ${team.color || '#4a90e2'}; color: white; border-radius: 10px;`;
+                        div.textContent = `${team.name} (${team.member_count || 0} عضو)`;
+                        container.appendChild(div);
+                    });
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل الفرق:', error);
+                document.getElementById('teamsList').innerHTML = '<div class="empty-state">خطأ في التحميل</div>';
+            }
+        }
+
+        // دوال الإضافة (مؤقتة)
+        function addStudent() {
+            const name = prompt('ادخل اسم الطالب:');
+            if (name && name.trim()) {
+                alert(`سيتم إضافة الطالب: ${name}\n(التنفيذ الفعلي لاحقاً)`);
+            }
+        }
+
+        function addUnit() {
+            const name = prompt('ادخل اسم الوحدة:');
+            if (name && name.trim()) {
+                alert(`سيتم إضافة الوحدة: ${name}\n(التنفيذ الفعلي لاحقاً)`);
+            }
+        }
+
+        function addTeam() {
+            const name = prompt('ادخل اسم الفريق:');
+            if (name && name.trim()) {
+                alert(`سيتم إضافة الفريق: ${name}\n(التنفيذ الفعلي لاحقاً)`);
+            }
+        }
+    </script>
+</body>
+
+</html>
